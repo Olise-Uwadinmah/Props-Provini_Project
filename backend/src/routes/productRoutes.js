@@ -1,17 +1,15 @@
 const express = require('express');
 const router = express.Router();
-// Import the functions from the controller
 const { 
     getProducts, 
     getProductByBarcode, 
-    updateProduct 
+    updateProduct, 
+    addProduct 
 } = require('../controllers/productController');
 
-// Define the routes
 router.get('/', getProducts);
 router.get('/:barcode', getProductByBarcode);
-
-// Line 10: This must match the name 'updateProduct' exactly
+router.post('/add', addProduct);
 router.put('/update-product', updateProduct);
 
 module.exports = router;

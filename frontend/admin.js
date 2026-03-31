@@ -1,86 +1,79 @@
 const API_URL = 'http://localhost:5000/api';
 
-// 1. PIN Protection
-const pin = prompt("Enter Manager PIN to access Inventory:");
+// PIN Protection
+const pin = prompt("Enter Manager PIN:");
 if (pin !== "1234") {
-    alert("Unauthorized Access!");
+    alert("Access Denied");
     window.location.href = "index.html";
 }
 
-// 2. Load Inventory Table
+// Load Table
 async function loadInventory() {
-    try {
-        const response = await fetch(`${API_URL}/products`);
-        const products = await response.json();
-        const tableBody = document.getElementById('inventory-body');
-        tableBody.innerHTML = ''; 
-
-        products.forEach(p => {
-            const stockClass = p.stock_quantity < 10 ? 'low-stock' : '';
-            const stockText = p.stock_quantity < 10 ? `${p.stock_quantity} (Low!)` : p.stock_quantity;
-
-            tableBody.innerHTML += `
-                <tr>
-                    <td>${p.id}</td>
-                    <td>${p.name}</td>
-                    <td>${p.barcode}</td>
-                    <td>₦${parseFloat(p.price).toLocaleString()}</td>
-                    <td class="${stockClass}">${stockText}</td>
-                </tr>`;
-        });
-    } catch (err) {
-        console.error("Failed to load inventory:", err);
-    }
+    const res = await fetch(`${API_URL}/products`);
+    const products = await res.json();
+    const body = document.getElementById('inventory-body');
+    body.innerHTML = products.map(p => `
+        <tr>
+            <td>${p.id}</td>
+            <td>${p.name}</td>
+            <td>${p.barcode}</td>
+            <td>₦${parseFloat(p.price).toLocaleString()}</td>
+            <td class="${p.stock_quantity < 10 ? 'low-stock' : ''}">${p.stock_quantity}</td>
+        </tr>
+    `).join('');
 }
 
-// 3. Single Update Function
-async function handleUpdate() {
-    const id = document.getElementById('stock-id').value;
-    const qty = document.getElementById('stock-qty').value;
-    const price = document.getElementById('stock-price').value;
-
-    if (!id) return alert("Please enter a Product ID");
-
+// Logic for ADDING NEW PRODUCT
+document.getElementById('add-product-btn').addEventListener('click', async () => {
     const payload = {
-        id: parseInt(id),
-        quantity: qty ? parseInt(qty) : 0,
-        price: price !== "" ? parseFloat(price) : null
+        name: document.getElementById('new-name').value,
+        barcode: document.getElementById('new-barcode').value,
+        price: parseFloat(document.getElementById('new-price').value),
+        stock_quantity: parseInt(document.getElementById('new-stock').value) || 0
     };
 
-    try {
-        const response = await fetch(`${API_URL}/products/update-product`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
+    const res = await fetch(`${API_URL}/products/add`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
 
-        if (response.ok) {
-            alert("✅ Update Successful!");
-            loadInventory(); 
-            // Clear and refocus
-            document.getElementById('stock-id').value = '';
-            document.getElementById('stock-qty').value = '';
-            document.getElementById('stock-price').value = '';
-            document.getElementById('stock-id').focus();
-        } else {
-            alert("Update failed. Check Product ID.");
-        }
-    } catch (err) {
-        alert("System Error: " + err.message);
-    }
-}
-
-// 4. Event Listeners
-document.getElementById('restock-btn').addEventListener('click', handleUpdate);
-
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-        const active = document.activeElement;
-        if (active.id === 'stock-id' || active.id === 'stock-qty' || active.id === 'stock-price') {
-            handleUpdate();
-        }
+    if (res.ok) {
+        alert("✅ Product Added");
+        loadInventory();
+        document.querySelectorAll('.admin-form input').forEach(i => i.value = '');
     }
 });
 
-// Initial Load
+// Logic for UPDATING EXISTING (Stock/Price)
+async function handleUpdate() {
+    const payload = {
+        id: parseInt(document.getElementById('stock-id').value),
+        quantity: parseInt(document.getElementById('stock-qty').value) || 0,
+        price: document.getElementById('stock-price').value !== "" ? parseFloat(document.getElementById('stock-price').value) : null
+    };
+
+    const res = await fetch(`${API_URL}/products/update-product`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+        alert("✅ Updated");
+        loadInventory();
+        document.getElementById('stock-id').value = '';
+        document.getElementById('stock-qty').value = '';
+        document.getElementById('stock-price').value = '';
+        document.getElementById('stock-id').focus();
+    }
+}
+
+document.getElementById('restock-btn').addEventListener('click', handleUpdate);
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && ['stock-id', 'stock-qty', 'stock-price'].includes(document.activeElement.id)) {
+        handleUpdate();
+    }
+});
+
 loadInventory();
