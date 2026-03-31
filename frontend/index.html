@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provini POS - Cashier Terminal</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div style="text-align: right; margin-bottom: 10px;">
+            <a href="admin.html" class="admin-link" style="text-decoration: none; font-weight: bold; color: var(--accent);">Manager Dashboard →</a>
+        </div>
+
+        <header>
+            <h1>🛒 Provini POS</h1>
+            <div class="status-bar">
+                Server: <span id="server-status">Checking...</span>
+            </div>
+        </header>
+
+        <main>
+            <section class="search-section">
+                <input type="text" id="barcode-input" placeholder="Scan Barcode or Type 'Qty*ID' (e.g., 12*1001)" autofocus>
+                <button id="add-btn">Add to Cart</button>
+            </section>
+
+            <section class="cart-section">
+                <table id="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-body">
+                        </tbody>
+                </table>
+            </section>
+
+            <section class="summary-section">
+                <div class="totals">
+                    <p>Subtotal: ₦<span id="subtotal">0.00</span></p>
+                    <p>VAT (7.5%): ₦<span id="tax">0.00</span></p>
+                    <h2 style="color: var(--accent);">Total: ₦<span id="total">0.00</span></h2>
+                </div>
+                <button id="checkout-btn" class="primary-btn">Complete Sale & Print</button>
+            </section>
+        </main>
+
+        <div id="receipt-print-area" style="display:none;">
+            <div style="text-align:center; font-family: 'Courier New', monospace; width: 300px; margin: auto; padding: 20px; border: 1px solid #000;">
+                <h2 style="margin:0;">PROVINI MARKET</h2>
+                <p style="font-size:12px;">Lagos, Nigeria</p>
+                <p style="font-size:10px;">Date: <span id="r-date"></span></p>
+                <hr style="border-top: 1px dashed #000;">
+                
+                <table style="width: 100%; font-size: 12px;">
+                    <thead>
+                        <tr>
+                            <th align="left">Item</th>
+                            <th align="center">Qty</th>
+                            <th align="right">Amt</th>
+                        </tr>
+                    </thead>
+                    <tbody id="receipt-items-list">
+                        </tbody>
+                </table>
+                
+                <hr style="border-top: 1px dashed #000;">
+                <div style="text-align: right; font-size: 12px;">
+                    <p>VAT (7.5%): ₦<span id="r-tax"></span></p>
+                    <h3 style="margin:0;">TOTAL: ₦<span id="r-total"></span></h3>
+                </div>
+                <hr style="border-top: 1px dashed #000;">
+                <p style="font-size:10px;">THANK YOU FOR YOUR PATRONAGE</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# Dependency folders (very heavy, no need to upload)
+node_modules/
+dist/
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE/Editor private folders
+.vscode/
+.idea/
+
+# Database-specific (if you have local exports)
+*.sql
+*.log
