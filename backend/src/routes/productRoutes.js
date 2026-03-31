@@ -1,12 +1,17 @@
 const express = require('express');
 const router = express.Router();
-// Make sure addStock is included in this curly bracket list!
-const { getProducts, getProductByBarcode, addStock } = require('../controllers/productController');
+// Import the functions from the controller
+const { 
+    getProducts, 
+    getProductByBarcode, 
+    updateProduct 
+} = require('../controllers/productController');
 
+// Define the routes
 router.get('/', getProducts);
 router.get('/:barcode', getProductByBarcode);
 
-// The new PUT route for updating data
-router.put('/add-stock', addStock);
+// Line 10: This must match the name 'updateProduct' exactly
+router.put('/update-product', updateProduct);
 
 module.exports = router;
