@@ -56,26 +56,34 @@ function renderCart() {
     const body = document.getElementById('cart-body');
     body.innerHTML = '';
     let subtotal = 0;
+    let totalVAT = 0;
+
+    // List of exempt categories based on Nigeria's 2026 Tax Law
+    const exemptCategories = ['Food', 'Baby', 'Medical', 'Books', 'Farming'];
 
     cart.forEach((item, index) => {
         const itemTotal = item.price * item.quantity;
         subtotal += itemTotal;
+
+        // Apply 7.5% VAT only if NOT in an exempt category
+        const isExempt = exemptCategories.includes(item.category);
+        const itemVAT = isExempt ? 0 : (itemTotal * 0.075);
+        totalVAT += itemVAT;
+
         body.innerHTML += `
             <tr>
-                <td>${item.name}</td>
+                <td>${item.name} <small>(${item.category})</small></td>
                 <td>₦${parseFloat(item.price).toLocaleString()}</td>
                 <td>${item.quantity}</td>
                 <td>₦${itemTotal.toLocaleString()}</td>
-                <td><button onclick="removeItem(${index})" style="background:#ff4b2b; color:white; border:none; padding:5px 10px; cursor:pointer;">X</button></td>
+                <td><button onclick="removeItem(${index})">X</button></td>
             </tr>`;
     });
 
-    const tax = subtotal * 0.075; 
-    const total = subtotal + tax;
-
+    const grandTotal = subtotal + totalVAT;
     document.getElementById('subtotal').innerText = subtotal.toLocaleString();
-    document.getElementById('tax').innerText = tax.toLocaleString();
-    document.getElementById('total').innerText = total.toLocaleString();
+    document.getElementById('tax').innerText = totalVAT.toLocaleString();
+    document.getElementById('total').innerText = grandTotal.toLocaleString();
 }
 
 function removeItem(index) {

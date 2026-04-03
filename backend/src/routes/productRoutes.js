@@ -1,15 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { 
-    getProducts, 
-    getProductByBarcode, 
-    updateProduct, 
-    addProduct 
-} = require('../controllers/productController');
+// Import the controller
+const productController = require('../controllers/productController');
 
-router.get('/', getProducts);
-router.get('/:barcode', getProductByBarcode);
-router.post('/add', addProduct);
-router.put('/update-product', updateProduct);
+// Define routes using the 'productController' object
+router.get('/', productController.getProducts);
+router.get('/next-barcode', productController.getNextBarcode); // This must be ABOVE the /:barcode route
+router.get('/:barcode', productController.getProductByBarcode);
+router.post('/add', productController.addProduct);
+router.put('/update-product', productController.updateProduct);
+router.delete('/:id', productController.deleteProduct);
 
 module.exports = router;
