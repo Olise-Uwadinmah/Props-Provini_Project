@@ -52,5 +52,5 @@ A high-performance Point of Sale (POS) application built with the **PERN stack**
 The `.gitignore` file is configured to exclude `node_modules/` and environment variables. Ensure your database credentials are kept private.
 
 ---
-**Developed by Provini Tech**
+**Developed by Golden Dawn Tech**
 ```
